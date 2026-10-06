@@ -9,7 +9,7 @@ const otpSchema = new Schema({
 const userSchema = new Schema(
   {
     username: { type: String, required: false, default: undefined },
-    mobile: { type: String, required: true },
+    phone: { type: String, required: true },
     otp: { type: otpSchema },
     accessToken: { type: String },
   },

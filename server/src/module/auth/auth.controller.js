@@ -14,7 +14,13 @@ class AuthController {
     try {
       const { mobile } = req.body;
       await this.#service.sendOTP(mobile);
-      return res.status(200).json({ message: AuthMessage.SendOTP });
+      return res.status(200).json({
+        success: true,
+        message: "OTP sent successfully",
+        data: {
+          expiresIn: "1d",
+        },
+      });
     } catch (error) {
       next(error);
     }
@@ -22,14 +28,20 @@ class AuthController {
 
   async checkOTP(req, res, next) {
     try {
-      const { mobile, code } = req.body;
-      const token = await this.#service.checkOTP(mobile, code);
-      return res
-        .cookie("access_token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === NodeEnv.Production,
-        })
-        .json({ message: AuthMessage.LoginSuccessfully, token });
+      const { phone, code } = req.body;
+      const token = await this.#service.checkOTP(phone, code);
+      return res.json({
+        success: true,
+        message: "Login successful",
+        data: {
+          token,
+          user: {
+            id: "...",
+            phone: "...",
+            role: "user",
+          },
+        },
+      });
     } catch (error) {
       next(error);
     }
