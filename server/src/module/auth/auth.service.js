@@ -34,7 +34,7 @@ class AuthService {
     user.otp = otp;
     await user.save();
 
-    // send otp via sms or email 
+    // send otp via sms or email
     // logic will apply in production
   }
 
@@ -50,7 +50,7 @@ class AuthService {
     if (!user.otp.verifiedPhone) user.otp.verifiedPhone = true;
 
     await user.save();
-    return token;
+    return { user, token };
   }
 
   async findUserByPhone(phone) {

@@ -8,7 +8,7 @@ export default async function auth(req, res, next) {
 
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
     if (decode?.id) {
-      const user = await User.findOne({ _id: decode.id }, { accessToken: 0, __v: 0 }).lean();
+      const user = await User.findOne({ _id: decode.id }).lean();
       if (!user) throw new Error("user does not exists");
       req.user = user;
       return next();
