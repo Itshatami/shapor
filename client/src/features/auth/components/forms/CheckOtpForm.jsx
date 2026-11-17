@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { checkOTP } from "../../services/auth.service";
+import styles from "./CheckOtpForm.module.css";
 
 function CheckOtpForm({ mobile, setStep }) {
   const [code, setCode] = useState("");
@@ -34,22 +34,17 @@ function CheckOtpForm({ mobile, setStep }) {
 
       navigate("/");
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-        "کد تایید صحیح نیست."
-      );
+      setError(error.response?.data?.message || "کد تایید صحیح نیست.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={submitHandler}>
+    <form onSubmit={submitHandler} className={styles.form}>
       <p>تایید کد ارسال شده</p>
 
-      <span>
-        کد پیامک شده به شماره {mobile} را وارد کنید.
-      </span>
+      <span>کد پیامک شده به شماره {mobile} را وارد کنید.</span>
 
       <label htmlFor="otp">کد تایید</label>
 
@@ -69,10 +64,7 @@ function CheckOtpForm({ mobile, setStep }) {
         {loading ? "در حال بررسی..." : "ورود"}
       </button>
 
-      <button
-        type="button"
-        onClick={() => setStep(1)}
-      >
+      <button type="button" onClick={() => setStep(1)} className={styles.backButton}>
         تغییر شماره موبایل
       </button>
     </form>

@@ -1,5 +1,4 @@
-
-import api from "../../../shared/config/api"
+import { api } from "../../../shared/config/api";
 
 const sendOTP = (mobile) => {
   return api.post("/auth/send-otp", { mobile });
@@ -12,18 +11,12 @@ const checkOTP = (mobile, code) => {
   });
 };
 
-const getMe = () => {
-  return api.get("/auth/me");
+const getProfile = () => {
+  return api.get("/whoami");
 };
 
 const logout = () => {
   return api.post("/auth/logout");
 };
 
-export {
-  sendOTP,
-  checkOTP,
-  getMe,
-  logout,
-};
-
+export { sendOTP, checkOTP, getProfile, logout };
