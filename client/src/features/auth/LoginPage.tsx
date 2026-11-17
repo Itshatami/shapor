@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { authService } from "./auth.service";
+import { authService } from "./services/auth.service";
 
 function LoginPage() {
   const [phone, setPhone] = useState("");

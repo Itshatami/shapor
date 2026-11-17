@@ -42,7 +42,7 @@ class AuthController {
           message: "Login successful",
           data: {
             user: {
-              id: use._id,
+              id: user._id,
               phone: user.phone,
               role: user.role,
             },
