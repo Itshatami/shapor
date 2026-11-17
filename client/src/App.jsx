@@ -5,7 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import MainLayout from "./shared/layouts/MainLayout";
 import defaultOptions from "./shared/config/reactQuery";
-import Router from "./routes/Router";
+import Router from "./router/Router";
 
 function App() {
   const queryClient = new QueryClient({ defaultOptions });

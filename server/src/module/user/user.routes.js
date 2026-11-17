@@ -4,7 +4,8 @@ import auth from "../../common/guard/auth.guard.js";
 
 const router = Router();
 
-router.get("/" ,auth , userController.whoami)
+// router.get("/" ,auth , userController.whoami)
+router.get("/"  , userController.whoami)
 
 const UserRouter = router;
 

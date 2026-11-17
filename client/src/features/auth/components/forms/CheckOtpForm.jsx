@@ -1,73 +1,39 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import {useNavigate} from "react-router-dom"
+import { useQuery } from "@tanstack/react-query";
 
-import { checkOTP } from "../../services/auth.service";
-import styles from "./CheckOtpForm.module.css";
+import { checkOtp } from "../../services/auth";
+import { getProfile } from "../../services/user";
 
-function CheckOtpForm({ mobile, setStep }) {
-  const [code, setCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+import styles from "./CheckOtpForm.module.css"
 
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+function CheckOtpForm({ code, setCode, mobile, setStep }) {
 
+  const navigate = useNavigate()
+  const {refetch} = useQuery(["profile" , getProfile])
+  
   const submitHandler = async (event) => {
     event.preventDefault();
-    setError("");
 
-    if (code.length !== 5) {
-      setError("کد تایید باید ۵ رقم باشد.");
-      return;
+    if (code.length !== 5) return;
+    const { response, error } = await checkOtp(code, mobile);
+    console.log({ response, error });
+
+    if (response) {
+      setCookie(response.data);
+      navigate("/") 
+      refetch()
     }
-
-    try {
-      setLoading(true);
-
-      await checkOTP(mobile, code);
-
-      // Refresh user data after successful authentication
-      await queryClient.invalidateQueries({
-        queryKey: ["auth", "me"],
-      });
-
-      navigate("/");
-    } catch (error) {
-      setError(error.response?.data?.message || "کد تایید صحیح نیست.");
-    } finally {
-      setLoading(false);
-    }
+    if (error) console.log(error.response.data.message);
   };
-
   return (
-    <form onSubmit={submitHandler} className={styles.form}>
-      <p>تایید کد ارسال شده</p>
-
-      <span>کد پیامک شده به شماره {mobile} را وارد کنید.</span>
-
-      <label htmlFor="otp">کد تایید</label>
-
-      <input
-        id="otp"
-        type="text"
-        inputMode="numeric"
-        value={code}
-        onChange={(event) => setCode(event.target.value)}
-        maxLength={5}
-        placeholder="کد تایید"
-      />
-
-      {error && <p>{error}</p>}
-
-      <button type="submit" disabled={loading}>
-        {loading ? "در حال بررسی..." : "ورود"}
-      </button>
-
-      <button type="button" onClick={() => setStep(1)} className={styles.backButton}>
-        تغییر شماره موبایل
-      </button>
-    </form>
+      <form onSubmit={submitHandler} className={styles.form}>
+        <p> تایید کد اس ام اس شده</p>
+        <span>کد پیامک شده به شماره {mobile} را وارد کنید.</span>
+        <label htmlFor="input">کد تایید را وارد کنید</label>
+        <input type="text" id="input" placeholder="کد تایید" value={code} onChange={(e) => setCode(e.target.value)} />
+        <button type="submit"> ورود</button>
+        <button className={styles.backButton} onClick={() => setStep(1)}>تغییر شماره موبایل</button>
+      </form>
   );
 }
 

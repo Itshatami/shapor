@@ -11,9 +11,9 @@ class AuthService {
     this.#model = User;
   }
 
-  async sendOTP(phone) {
+  async sendOTP(mobile) {
     // find the user
-    const user = await this.#model.findOne({ phone });
+    const user = await this.#model.findOne({ mobile });
 
     const now = new Date().getTime();
     const otp = {
@@ -23,7 +23,7 @@ class AuthService {
 
     // if user not exists, create
     if (!user) {
-      const newUser = await this.#model.create({ phone, otp });
+      const newUser = await this.#model.create({ mobile, otp });
       return newUser;
     }
 
@@ -38,23 +38,23 @@ class AuthService {
     // logic will apply in production
   }
 
-  async checkOTP(phone, code) {
+  async checkOTP(mobile, code) {
     const now = new Date().getTime();
-    const user = await this.findUserByPhone(phone);
+    const user = await this.findUserByMoblie(mobile);
 
     if (user?.otp?.expiresIn < now) throw new Error(AuthMessage.OtpExpired);
     if (user?.otp?.code !== code) throw new Error(AuthMessage.OtpIncorrect);
 
-    const token = this.signToken({ id: user._id, phone });
+    const token = this.signToken({ id: user._id, mobile });
     user.token = token;
-    if (!user.otp.verifiedPhone) user.otp.verifiedPhone = true;
+    if (!user.otp.verifiedMoblie) user.otp.verifiedMoblie = true;
 
     await user.save();
     return { user, token };
   }
 
-  async findUserByPhone(phone) {
-    const user = await this.#model.findOne({ phone });
+  async findUserByMoblie(mobile) {
+    const user = await this.#model.findOne({ mobile });
     if (!user) throw new Error(AuthMessage.NotFoundUser);
     return user;
   }

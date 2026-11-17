@@ -5,7 +5,8 @@ import auth from "../common/guard/auth.guard.js";
 const router = Router();
 
 router.use("/api/auth", AuthRouter);
-router.use("/whoami", auth, UserRouter);
+// router.use("/api/whoami", auth, UserRouter);
+router.use("/api/whoami", UserRouter);
 
 // router.get("/", auth, (req, res, next) => {
 //   //   console.log(req.headers);
