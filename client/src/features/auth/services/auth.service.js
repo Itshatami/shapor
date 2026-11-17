@@ -1,5 +1,5 @@
 
-import api from "@/shared/configs/api";
+import api from "../../../shared/config/api"
 
 const sendOTP = (mobile) => {
   return api.post("/auth/send-otp", { mobile });
