@@ -12,6 +12,10 @@ const userSchema = new Schema(
     mobile: { type: String, unique: true, required: true },
     otp: { type: otpSchema },
     role: { type: String, enum: ["admin", "user", "owner"], default: "user" },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );

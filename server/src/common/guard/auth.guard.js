@@ -4,6 +4,8 @@ import User from "../../module/user/user.model.js";
 export default async function auth(req, res, next) {
   try {
     const token = req.cookies?.access_token;
+    console.log(token);
+    
 
     if (!token) {
       throw new Error("Unauthorized");
@@ -20,6 +22,10 @@ export default async function auth(req, res, next) {
     if (!user) {
       throw new Error("User does not exist");
     }
+
+    if (decoded.tokenVersion !== user.tokenVersion) {
+  throw new Error("Unauthorized");
+}
 
     req.user = user;
 

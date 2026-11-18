@@ -1,4 +1,3 @@
-
 import autoBind from "auto-bind";
 import { randomInt } from "crypto";
 import jwt from "jsonwebtoken";
@@ -46,6 +45,7 @@ class AuthService {
     };
 
     await user.save();
+    console.log(otp);
 
     // TODO: Send OTP via SMS in production
   }
@@ -56,11 +56,7 @@ class AuthService {
     const now = Date.now();
 
     // Check OTP existence and expiration
-    if (
-      !user.otp?.code ||
-      !user.otp?.expiresIn ||
-      user.otp.expiresIn <= now
-    ) {
+    if (!user.otp?.code || !user.otp?.expiresIn || user.otp.expiresIn <= now) {
       throw new Error(AuthMessage.OtpExpired);
     }
 
@@ -73,6 +69,7 @@ class AuthService {
     const token = this.signToken({
       id: user._id,
       mobile: user.mobile,
+      tokenVersion: user.tokenVersion,
     });
 
     // Verify mobile and consume OTP
@@ -97,11 +94,7 @@ class AuthService {
   }
 
   signToken(payload) {
-    return jwt.sign(
-      payload,
-      process.env.JWT_SECRET_KEY,
-      { expiresIn: "1d" }
-    );
+    return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
   }
 }
 

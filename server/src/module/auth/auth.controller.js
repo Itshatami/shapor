@@ -2,12 +2,15 @@ import autoBind from "auto-bind";
 import authService from "./auth.service.js";
 import AuthMessage from "./auth.message.js";
 import NodeEnv from "../../common/constant/env.enum.js";
+import User from "../user/user.model.js";
 
 class AuthController {
   #service;
+  #model;
   constructor() {
     autoBind(this);
     this.#service = authService;
+    this.#model = User;
   }
 
   async sendOTP(req, res, next) {
@@ -53,12 +56,26 @@ class AuthController {
     }
   }
 
-  logout(req, res, next) {
+  async logout(req, res, next) {
     try {
-      return res.clearCookie("access_token").status(200).json({
-        success: true,
-        message: AuthMessage.Logout,
+      const { _id } = req.user;
+
+      await this.#model.findByIdAndUpdate(_id, {
+        $inc: { tokenVersion: 1 },
       });
+
+      return res
+        .clearCookie("access_token", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === NodeEnv.Production,
+          sameSite: "lax",
+          path: "/",
+        })
+        .status(200)
+        .json({
+          success: true,
+          message: AuthMessage.Logout,
+        });
     } catch (error) {
       next(error);
     }
