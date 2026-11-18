@@ -9,11 +9,11 @@ const otpSchema = new Schema({
 const userSchema = new Schema(
   {
     username: { type: String, required: false, default: undefined },
-    mobile: { type: String, required: true },
+    mobile: { type: String, unique: true, required: true },
     otp: { type: otpSchema },
-    accessToken: { type: String },
+    role: { type: String, enum: ["admin", "user", "owner"], default: "user" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = model("User", userSchema);

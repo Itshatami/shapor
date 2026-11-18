@@ -73,3 +73,68 @@ export default defineConfig([
 ])
 
 ```
+
+```
+client
+├─ .env
+├─ eslint.config.js
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public
+│  ├─ favicon.svg
+│  └─ icons.svg
+├─ README.md
+├─ src
+│  ├─ app
+│  │  ├─ providers
+│  │  │  └─ AppProviders.jsx
+│  │  └─ queryClient.js
+│  ├─ App.jsx
+│  ├─ assets
+│  │  ├─ hero.png
+│  │  ├─ icons
+│  │  ├─ images
+│  │  ├─ react.svg
+│  │  └─ vite.svg
+│  ├─ features
+│  │  ├─ auth
+│  │  │  ├─ AuthPage.jsx
+│  │  │  ├─ components
+│  │  │  │  └─ forms
+│  │  │  │     ├─ CheckOtpForm.jsx
+│  │  │  │     ├─ CheckOtpForm.module.css
+│  │  │  │     ├─ SendOtpForm.jsx
+│  │  │  │     └─ SendOtpForm.module.css
+│  │  │  ├─ hooks
+│  │  │  ├─ index.js
+│  │  │  ├─ pages
+│  │  │  └─ services
+│  │  │     └─ auth.service.js
+│  │  ├─ cart
+│  │  ├─ checkout
+│  │  ├─ orders
+│  │  ├─ products
+│  │  └─ profile
+│  ├─ index.css
+│  ├─ main.jsx
+│  ├─ router
+│  │  └─ Router.jsx
+│  └─ shared
+│     ├─ components
+│     │  ├─ common
+│     │  ├─ Loader.jsx
+│     │  ├─ Loader.module.css
+│     │  └─ ui
+│     ├─ config
+│     │  ├─ api.js
+│     │  └─ reactQuery.js
+│     ├─ hooks
+│     ├─ layouts
+│     │  └─ MainLayout.jsx
+│     ├─ services
+│     └─ utils
+│        └─ cookie.js
+└─ vite.config.js
+
+```

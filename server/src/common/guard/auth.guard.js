@@ -4,16 +4,26 @@ import User from "../../module/user/user.model.js";
 export default async function auth(req, res, next) {
   try {
     const token = req.cookies?.access_token;
-    if (!token) throw new Error("unAuthorized");
 
-    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    if (decode?.id) {
-      const user = await User.findOne({ _id: decode.id }).lean();
-      if (!user) throw new Error("user does not exists");
-      req.user = user;
-      return next();
+    if (!token) {
+      throw new Error("Unauthorized");
     }
-    throw new Error("un authorized");
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+    if (!decoded?.id) {
+      throw new Error("Unauthorized");
+    }
+
+    const user = await User.findById(decoded.id).select("-otp -__v").lean();
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    req.user = user;
+
+    next();
   } catch (error) {
     next(error);
   }

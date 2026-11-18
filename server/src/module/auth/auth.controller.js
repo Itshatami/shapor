@@ -28,8 +28,8 @@ class AuthController {
 
   async checkOTP(req, res, next) {
     try {
-      const { phone, code } = req.body;
-      const { user, token } = await this.#service.checkOTP(phone, code);
+      const { mobile, code } = req.body;
+      const { user, token } = await this.#service.checkOTP(mobile, code);
       return res
         .cookie("access_token", token, {
           httpOnly: true,
@@ -43,7 +43,7 @@ class AuthController {
           data: {
             user: {
               id: user._id,
-              phone: user.phone,
+              mobile: user.mobile,
               role: user.role,
             },
           },

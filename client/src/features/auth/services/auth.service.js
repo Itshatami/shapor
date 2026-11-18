@@ -1,12 +1,8 @@
+
 import { api } from "../../../shared/config/api";
 
-const sendOTP = async (mobile) => {
-  try {
-    const response = await api.post("/auth/send-otp", { mobile });
-    return response;
-  } catch (error) {
-    return new Promise.reject({ error });
-  }
+const sendOTP = (mobile) => {
+  return api.post("/auth/send-otp", { mobile });
 };
 
 const checkOTP = (mobile, code) => {
@@ -17,11 +13,11 @@ const checkOTP = (mobile, code) => {
 };
 
 const getProfile = () => {
-  return api.get("/api/whoami");
+  return api.get("/auth/me");
 };
 
 const logout = () => {
-  return api.post("/auth/logout");
+  return api.get("/auth/logout");
 };
 
 export { sendOTP, checkOTP, getProfile, logout };

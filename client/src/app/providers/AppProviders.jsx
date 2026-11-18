@@ -1,8 +1,16 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 
-function AppProviders() {
+import queryClient from "../queryClient";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+function AppProviders({ children }) {
   return (
-    <div>AppProviders</div>
-  )
+    <QueryClientProvider client={queryClient}>
+      {children}
+            <ReactQueryDevtools />
+
+    </QueryClientProvider>
+  );
 }
 
-export default AppProviders
+export default AppProviders;

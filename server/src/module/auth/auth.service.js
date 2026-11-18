@@ -1,68 +1,110 @@
+
 import autoBind from "auto-bind";
-import User from "../user/user.model.js";
 import { randomInt } from "crypto";
-import AuthMessage from "./auth.message.js";
 import jwt from "jsonwebtoken";
+
+import User from "../user/user.model.js";
+import AuthMessage from "./auth.message.js";
 
 class AuthService {
   #model;
+
   constructor() {
     autoBind(this);
     this.#model = User;
   }
 
   async sendOTP(mobile) {
-    // find the user
     const user = await this.#model.findOne({ mobile });
 
-    const now = new Date().getTime();
+    const now = Date.now();
+
     const otp = {
-      code: Math.floor(randomInt(10000, 99999)),
+      code: String(randomInt(10000, 100000)),
       expiresIn: now + 1000 * 60 * 2,
     };
 
-    // if user not exists, create
+    // Create a new user if not exists
     if (!user) {
-      const newUser = await this.#model.create({ mobile, otp });
-      return newUser;
+      await this.#model.create({
+        mobile,
+        otp,
+      });
+
+      return;
     }
 
-    // check otp exiresIn
-    if (user.otp && user.otp.expiresIn > now) throw new Error(AuthMessage.OtpNotExpired);
+    // Prevent sending a new OTP before expiration
+    if (user.otp?.expiresIn > now) {
+      throw new Error(AuthMessage.OtpNotExpired);
+    }
 
-    // if otp expires, give a new one
-    user.otp = otp;
+    // Update OTP
+    user.otp = {
+      ...otp,
+      verifiedMobile: false,
+    };
+
     await user.save();
 
-    // send otp via sms or email
-    // logic will apply in production
+    // TODO: Send OTP via SMS in production
   }
 
   async checkOTP(mobile, code) {
-    const now = new Date().getTime();
-    const user = await this.findUserByMoblie(mobile);
+    const user = await this.findUserByMobile(mobile);
 
-    if (user?.otp?.expiresIn < now) throw new Error(AuthMessage.OtpExpired);
-    if (user?.otp?.code !== code) throw new Error(AuthMessage.OtpIncorrect);
+    const now = Date.now();
 
-    const token = this.signToken({ id: user._id, mobile });
-    user.token = token;
-    if (!user.otp.verifiedMoblie) user.otp.verifiedMoblie = true;
+    // Check OTP existence and expiration
+    if (
+      !user.otp?.code ||
+      !user.otp?.expiresIn ||
+      user.otp.expiresIn <= now
+    ) {
+      throw new Error(AuthMessage.OtpExpired);
+    }
+
+    // Check OTP code
+    if (String(user.otp.code) !== String(code)) {
+      throw new Error(AuthMessage.OtpIncorrect);
+    }
+
+    // Generate JWT
+    const token = this.signToken({
+      id: user._id,
+      mobile: user.mobile,
+    });
+
+    // Verify mobile and consume OTP
+    user.otp = {
+      verifiedMobile: true,
+      expiresIn: 0,
+    };
 
     await user.save();
+
     return { user, token };
   }
 
-  async findUserByMoblie(mobile) {
+  async findUserByMobile(mobile) {
     const user = await this.#model.findOne({ mobile });
-    if (!user) throw new Error(AuthMessage.NotFoundUser);
+
+    if (!user) {
+      throw new Error(AuthMessage.NotFoundUser);
+    }
+
     return user;
   }
 
   signToken(payload) {
-    return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
+    return jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1d" }
+    );
   }
 }
 
 const authService = new AuthService();
+
 export default authService;
