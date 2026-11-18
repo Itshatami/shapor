@@ -1,6 +1,14 @@
-const AllExpceptionHandler = (app) => {
+const AllExceptionHandler = (app) => {
   app.use((err, req, res, next) => {
-    return res.json({ error: err.message });
+    console.error(err);
+
+    const statusCode = err.statusCode || 500;
+
+    return res.status(statusCode).json({
+      success: false,
+      error: err.message,
+    });
   });
 };
-export default AllExpceptionHandler;
+
+export default AllExceptionHandler;
